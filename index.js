@@ -23,16 +23,15 @@ class MyPromise {
 
   #runCallBacks() {
     if (this.#state === STATE.FULFILLED) {
-      console.log(this.#thenCbs)
       this.#thenCbs.forEach(cb => {
         cb(this.#value)
       })
       this.#thenCbs = []
     }
-
+    // console.log(this.#catchCbs)
     if (this.#state === STATE.REJECTED) {
-       this.#catchCbs.forEach(cb => {
-        cb(this.#state)
+      this.#catchCbs.forEach(cb => {
+        cb(this.#value)
       })
       this.#catchCbs = []
     }
@@ -62,9 +61,5 @@ class MyPromise {
   
   then(cb) {
     this.#thenCbs.push(cb)
-  }
-
-  catch(cb) {
-    this.#catchCbs.push(cb)
   }
 }

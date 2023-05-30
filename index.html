@@ -11,17 +11,15 @@
   <script>
     const p = new MyPromise((resolve, reject) => {
       setTimeout(() => {
-        resolve('1')
+        reject('1')
       })
     })
 
-    p.then((res) => {
-      console.log(res)
-    })
-
-    p.then((res) => {
-      console.log(res)
-    })
+    // p.then((res) => {
+    //   console.log(res)
+    // }, (err) => {
+    //   console.log(err)
+    // })
 
   </script>
 </body>
