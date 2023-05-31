@@ -11,13 +11,18 @@
   <script>
     const p = new MyPromise((resolve, reject) => {
       setTimeout(() => {
-        reject('1')
+        resolve('1')
       })
     })
 
-    // p.then((res) => {
-    //   console.log(res)
-    // }, (err) => {
+    p.then((res) => {
+      console.log(res)
+      return 123
+    }).then().catch().then((res) => {
+      console.log(res)
+    })
+
+    // p.catch((err) => {
     //   console.log(err)
     // })
 

@@ -22,6 +22,7 @@ class MyPromise {
   }
 
   #runCallBacks() {
+    console.log(this.#state)
     if (this.#state === STATE.FULFILLED) {
       this.#thenCbs.forEach(cb => {
         cb(this.#value)
@@ -29,8 +30,10 @@ class MyPromise {
       this.#thenCbs = []
     }
     // console.log(this.#catchCbs)
+    // console.log(this.#state === STATE.REJECTED)
     if (this.#state === STATE.REJECTED) {
       this.#catchCbs.forEach(cb => {
+        
         cb(this.#value)
       })
       this.#catchCbs = []
@@ -54,12 +57,52 @@ class MyPromise {
     // 用户调用了reject
     if (this.#state !== STATE.PENDING) return
     this.#value = value
-    this.$state = STATE.REJECTED
+    this.#state = STATE.REJECTED
     // 执行catch回调
     this.#runCallBacks()
   }
   
-  then(cb) {
-    this.#thenCbs.push(cb)
+  then(thenCb, catchCb) {
+    return new MyPromise((resolve, reject) => {
+      // console.log(thenCb)
+      // resolve onSuccess
+      // reject onFail
+      // thenCb: 
+      // 1.有可能没有回调
+      // 2.如果有回调需要将回调的返回值继续传递给下一个then
+      this.#thenCbs.push((res) => {
+        // console.log(thenCb)
+        if (thenCb == null) {
+          console.log(res)
+          // onSuccess
+          resolve(res)
+          return
+        }
+        try {
+          // 如果传了对调 将回调的返回值传递给下一个then
+          resolve(thenCb(res))
+        } catch (err) {
+          reject(error)
+        }
+      })
+
+      this.#catchCbs.push((res) => {
+        if (catchCb == null) {
+          reject(res)
+          return
+        }
+        try {
+          resolve(catchCb(resolve))
+        } catch (err) {
+          reject(error)
+        }
+      })
+      this.#runCallBacks()
+    })
+    
+  }
+
+  catch(cb) {
+    return this.then(undefined, cb)
   }
 }
