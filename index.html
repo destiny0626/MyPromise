@@ -9,18 +9,19 @@
 </head>
 <body>
   <script>
-    const p = new MyPromise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('1')
-      })
-    })
+    const p = new MyPromise('12312')
 
-    p.then((res) => {
-      console.log(res)
-      return 123
-    }).then().catch().then((res) => {
-      console.log(res)
-    })
+    p.catch()
+
+    // p.then((res) => {
+    //   return new MyPromise((resolve, reject) => {
+    //     reject('1232131')
+    //   })
+    // }).finally((res) => {
+    //   console.log(res)
+    // }).then(res=> {
+    //   console.log(res)
+    // })
 
     // p.catch((err) => {
     //   console.log(err)
