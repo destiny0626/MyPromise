@@ -9,23 +9,27 @@
 </head>
 <body>
   <script>
-    const p = new MyPromise('12312')
+    const p1 = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        reject(1)
+      })
+    })
 
-    p.catch()
+    const p2 = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        reject(2)
+      })
+    })
 
-    // p.then((res) => {
-    //   return new MyPromise((resolve, reject) => {
-    //     reject('1232131')
-    //   })
-    // }).finally((res) => {
-    //   console.log(res)
-    // }).then(res=> {
-    //   console.log(res)
-    // })
+    const p3 = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        reject(3)
+      })
+    })
 
-    // p.catch((err) => {
-    //   console.log(err)
-    // })
+    MyPromise.any([p2,p1,p3]).then(res => {
+    }).catch(err => {
+    })
 
   </script>
 </body>

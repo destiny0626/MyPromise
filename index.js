@@ -94,7 +94,7 @@ class MyPromise {
           // 如果传了对调 将回调的返回值传递给下一个then
           resolve(thenCb(res))
         } catch (err) {
-          reject(error)
+          reject(err)
         }
       })
 
@@ -126,6 +126,89 @@ class MyPromise {
     }, (err) => {
       cb(err)
       throw new Error(err)
+    })
+  }
+
+  static resolve(value) {
+    return new MyPromise((resolve) => {
+      resolve(value)
+    })
+  }
+
+  static resolve(value) {
+    return new MyPromise((resolve, reject) => {
+      reject(value)
+    })
+  }
+
+  static all(promises) {
+    const results = []
+    let completePromises = 0
+    return new MyPromise((resolve, reject) => {
+      for (let i = 0; i < promises.length; i++) {
+        const promise = promises[i]
+        promise.then((res) => {
+          // 按照下标进行存储
+          results[i] = res
+          completePromises++
+          if (completePromises === promises.length) {
+            resolve(results)
+          }
+        }).catch(reject)
+      }
+    })
+  }
+
+  static allSettled(promises) {
+    const results = []
+    let completePromises = 0
+    return new MyPromise((resolve, reject) => {
+      for (let i = 0; i < promises.length; i++) {
+        const promise = promises[i]
+        promise.then((res) => {
+          // 按照下标进行存储
+          results[i] = {
+            status: STATE.FULFILLED,
+            value: res
+          }
+        }).catch(reason => {
+          results[i] = {
+            status: STATE.REJECTED,
+            reason
+          }
+        }).finally(() => {
+          completePromises++
+          if (completePromises === promises.length) {
+            resolve(results)
+          }
+        })
+      }
+    })
+  }
+
+  static race(promises) {
+    return new MyPromise((resolve, reject) => {
+      promises.forEach(promise => {
+        promise.then(resolve).catch(reject)
+      })
+    })
+  }
+
+  static any(promises) {
+    const errors = []
+    let rejectedPromises = 0
+    return new MyPromise((resolve, reject) => {
+      for (let i = 0; i < promises.length; i++) {
+        const promise = promises[i]
+        promise.then(resolve).catch(value => {
+          // 按照下标进行存储
+          errors[i] = value
+          rejectedPromises++
+          if (rejectedPromises === promises.length) {
+            reject(errors)
+          }
+        })
+      }
     })
   }
 }
